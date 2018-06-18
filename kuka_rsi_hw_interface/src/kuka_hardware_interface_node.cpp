@@ -76,7 +76,7 @@ int main(int argc, char** argv)
   auto stopwatch_now = stopwatch_last;
 
   // TODO: controller manager takes only hardware_interface::RobotHW* as arguments
-  controller_manager::ControllerManager controller_manager(kuka_rsi_hwi_.get() nh);
+  controller_manager::ControllerManager controller_manager(kuka_rsi_hwi_.get(), nh);
   kuka_rsi_hwi_->start();
   ROS_WARN("kuka_rsi_hwi successfully started!");
 
