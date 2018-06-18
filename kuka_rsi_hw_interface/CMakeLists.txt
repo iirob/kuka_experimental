@@ -83,3 +83,7 @@ install(
 install(
   TARGETS kuka_hardware_interface_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY test
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
