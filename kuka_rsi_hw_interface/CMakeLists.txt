@@ -31,7 +31,7 @@ catkin_package(
     joint_limits_interface
     roscpp
     std_msgs
-    ati_force_torque
+    force_torque_sensor
     force_controllers
   DEPENDS
     TinyXML
