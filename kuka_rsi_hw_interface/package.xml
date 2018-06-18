@@ -22,4 +22,7 @@
   <depend>realtime_tools</depend>
   <depend>roscpp</depend>
   <depend>std_msgs</depend>
+  <depend>ati_force_torque</depend>
+  <depend>force_controllers</depend>
+  <depend>kdl_parser</depend>
 </package>

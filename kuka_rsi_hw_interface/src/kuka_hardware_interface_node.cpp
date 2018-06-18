@@ -37,65 +37,128 @@
  * Author: Lars Tingelstad <lars.tingelstad@ntnu.no>
  */
 
+#include <hardware_interface/robot_hw.h>
 #include <kuka_rsi_hw_interface/kuka_hardware_interface.h>
+#include <kuka_rsi_hw_interface/kuka_hardware_interface_with_fts.h>
+#include <kdl_parser/kdl_parser.hpp>
+#include <boost/shared_ptr.hpp>
+
+boost::shared_ptr<kuka_rsi_hw_interface::KukaHardwareInterface> kuka_rsi_hwi_;
+boost::shared_ptr<controller_manager::ControllerManager> controller_manager_;
+
+ros::Time timestamp_;
+ros::Duration period_;
+auto stopwatch_last_ = std::chrono::steady_clock::now();
+auto stopwatch_now_ = std::chrono::steady_clock::now();
+
+void updateRSIData(const ros::TimerEvent& event)
+{
+
+    // Receive current state from robot
+    if (!kuka_rsi_hwi_->read(timestamp_, period_))
+    {
+        ROS_FATAL_NAMED("kuka_hardware_interface", "Failed to read state from robot. Shutting down!");
+        ros::shutdown();
+    }
+    
+    // Get current time and elapsed time since last read
+    timestamp_ = ros::Time::now();
+    stopwatch_now_ = std::chrono::steady_clock::now();
+    period_.fromSec(std::chrono::duration_cast<std::chrono::duration<double>>(stopwatch_now_ - stopwatch_last_).count());
+    stopwatch_last_ = stopwatch_now_;
+
+    // Update the controllers
+    controller_manager_->update(timestamp_, period_);
+
+    // Send new setpoint to robot
+    kuka_rsi_hwi_->write(timestamp_, period_);
+}
+
 
 int main(int argc, char** argv)
 {
-  ROS_INFO_STREAM_NAMED("hardware_interface", "Starting hardware interface...");
+    ROS_INFO_STREAM_NAMED("hardware_interface", "Starting hardware interface...");
 
-  ros::init(argc, argv, "kuka_rsi_hardware_interface");
+    ros::init(argc, argv, "kuka_rsi_hardware_interface");
 
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
+    ros::AsyncSpinner spinner(4);
+    spinner.start();
 
-  ros::NodeHandle nh;
-
-  kuka_rsi_hw_interface::KukaHardwareInterface kuka_rsi_hw_interface;
-  kuka_rsi_hw_interface.configure();
-
-  // Set up timers
-  ros::Time timestamp;
-  ros::Duration period;
-  auto stopwatch_last = std::chrono::steady_clock::now();
-  auto stopwatch_now = stopwatch_last;
-
-  controller_manager::ControllerManager controller_manager(&kuka_rsi_hw_interface, nh);
-
-  kuka_rsi_hw_interface.start();
-
-  // Get current time and elapsed time since last read
-  timestamp = ros::Time::now();
-  stopwatch_now = std::chrono::steady_clock::now();
-  period.fromSec(std::chrono::duration_cast<std::chrono::duration<double>>(stopwatch_now - stopwatch_last).count());
-  stopwatch_last = stopwatch_now;
-
-  // Run as fast as possible
-  while (ros::ok())
-  //while (!g_quit)
-  {
-    // Receive current state from robot
-    if (!kuka_rsi_hw_interface.read(timestamp, period))
+    ros::NodeHandle nh;
+        
+    bool kuka_fts;
+ 
+    if (nh.getParam("kuka_fts", kuka_fts) and kuka_fts) 
     {
-      ROS_FATAL_NAMED("kuka_hardware_interface", "Failed to read state from robot. Shutting down!");
-      ros::shutdown();
+        ROS_INFO_STREAM_NAMED("hardware_interface", "This is KUKA hardware interface with FTS!");
+        kuka_rsi_hwi_.reset(new kuka_rsi_hw_interface::KukaHardwareInterfaceWithFTS(nh));
     }
+    else 
+    {
+        ROS_INFO_STREAM_NAMED("hardware_interface", "This is KUKA hardware interface without FTS!");
+        kuka_rsi_hwi_.reset(new kuka_rsi_hw_interface::KukaHardwareInterface(nh));
+    }
+    kuka_rsi_hwi_->configure();
+    // Set up timers
+    ros::Time timestamp;
+    ros::Duration period;
+    auto stopwatch_last = std::chrono::steady_clock::now();
+    auto stopwatch_now = stopwatch_last;
+
+    // TODO: controller manager takes only hardware_interface::RobotHW* as arguments
+    controller_manager_.reset(new controller_manager::ControllerManager(kuka_rsi_hwi_.get(), nh));
+    kuka_rsi_hwi_->start();
+    ROS_WARN("kuka_rsi_hwi successfully started!");
 
     // Get current time and elapsed time since last read
     timestamp = ros::Time::now();
     stopwatch_now = std::chrono::steady_clock::now();
     period.fromSec(std::chrono::duration_cast<std::chrono::duration<double>>(stopwatch_now - stopwatch_last).count());
     stopwatch_last = stopwatch_now;
+    // time and elapsed time since last read
+    timestamp = ros::Time::now();
+    stopwatch_now = std::chrono::steady_clock::now();
+    period.fromSec(std::chrono::duration_cast<std::chrono::duration<double>>(stopwatch_now - stopwatch_last).count());
+    stopwatch_last = stopwatch_now;
+    
+    // Get current time and elapsed time since last read
+    timestamp_ = ros::Time::now();
+    stopwatch_now_ = std::chrono::steady_clock::now();
+    period_.fromSec(std::chrono::duration_cast<std::chrono::duration<double>>(stopwatch_now_ - stopwatch_last_).count());
+    stopwatch_last_ = stopwatch_now_;
+    
+    ros::Timer timer = nh.createTimer(ros::Duration(ros::Rate(1000)), updateRSIData);
+    
+    
 
-    // Update the controllers
-    controller_manager.update(timestamp, period);
+//     // Run as fast as possible
+//     while (ros::ok())
+//     //while (!g_quit)
+//     {
+//         // Receive current state from robot
+//         if (!kuka_rsi_hwi_->read(timestamp, period))
+//         {
+//             ROS_FATAL_NAMED("kuka_hardware_interface", "Failed to read state from robot. Shutting down!");
+//             ros::shutdown();
+//         }
+//         
+//         // Get current time and elapsed time since last read
+//         timestamp = ros::Time::now();
+//         stopwatch_now = std::chrono::steady_clock::now();
+//         period.fromSec(std::chrono::duration_cast<std::chrono::duration<double>>(stopwatch_now - stopwatch_last).count());
+//         stopwatch_last = stopwatch_now;
+// 
+//         // Update the controllers
+//         controller_manager.update(timestamp, period);
+// 
+//         // Send new setpoint to robot
+//         kuka_rsi_hwi_->write(timestamp, period);
+//     }
 
-    // Send new setpoint to robot
-    kuka_rsi_hw_interface.write(timestamp, period);
-  }
+//     spinner.stop();
+    ros::waitForShutdown();
+    ROS_INFO_STREAM_NAMED("hardware_interface", "Shutting down.");
 
-  spinner.stop();
-  ROS_INFO_STREAM_NAMED("hardware_interface", "Shutting down.");
-
-  return 0;
+    return 0;
 
 }
