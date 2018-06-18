@@ -17,7 +17,7 @@ KukaHardwareInterfaceWithFTS::KukaHardwareInterfaceWithFTS(ros::NodeHandle nh) :
     
     // create a robot handle for kr5, and attach the fake sensor handle
     ROS_DEBUG_STREAM("creating ForceTorqueControllerHandle");
-    force_torque_control::ForceTorqueControllerHandle handle("kr5_controller_handle");
+    force_torque_control::ForceTorqueControllerHandle handle("kuka_fts_controller_handle");
     
     ROS_DEBUG_STREAM("creating ForceTorqueSensorHandle");
     ftsh_.reset(new force_torque_sensor::ForceTorqueSensorHandle(nh_, fts_name, fts_transform_frame));
