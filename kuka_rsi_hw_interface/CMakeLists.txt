@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   realtime_tools
   roscpp
   std_msgs
-  ati_force_torque
+  force_torque_sensor
   force_controllers
   kdl_parser
 )
@@ -47,7 +47,6 @@ include_directories(
 
 add_library(kuka_hardware_interface
   src/kuka_hardware_interface.cpp
-#   src/kuka_hardware_interface_with_fts.cpp
 )
 add_library(kuka_hardware_interface_with_fts
   src/kuka_hardware_interface_with_fts.cpp
@@ -76,10 +75,11 @@ target_link_libraries(kuka_hardware_interface_node
 
 
 install(
-  TARGETS
-    kuka_hardware_interface
-    kuka_hardware_interface_with_fts
-    kuka_hardware_interface_node
+  TARGETS kuka_hardware_interface
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(
+  TARGETS kuka_hardware_interface_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
