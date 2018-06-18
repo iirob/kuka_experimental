@@ -91,7 +91,7 @@ int main(int argc, char** argv)
   //while (!g_quit)
   {
     // Receive current state from robot
-    if (!kuka_rsi_hw_interface->read(timestamp, period))
+    if (!kuka_rsi_hwi_->read(timestamp, period))
     {
       ROS_FATAL_NAMED("kuka_hardware_interface", "Failed to read state from robot. Shutting down!");
       ros::shutdown();
@@ -107,7 +107,7 @@ int main(int argc, char** argv)
     controller_manager.update(timestamp, period);
 
     // Send new setpoint to robot
-    kuka_rsi_hw_interface->write(timestamp, period);
+    kuka_rsi_hwi_->write(timestamp, period);
   }
 
   spinner.stop();
