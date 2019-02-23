@@ -1,0 +1,7 @@
+<library path="lib/libkuka_hardware_interface">
+	<class name="kuka_rsi_hw_interface/KukaHardwareInterface" type="kuka_rsi_hw_interface::KukaHardwareInterface" base_class_type="hardware_interface::RobotHW">
+		<description>
+			A type of RobotHW
+		</description>
+	</class>
+</library>

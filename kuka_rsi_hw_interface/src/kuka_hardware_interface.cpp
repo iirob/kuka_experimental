@@ -38,7 +38,7 @@
  */
 
 #include <kuka_rsi_hw_interface/kuka_hardware_interface.h>
-
+#include <pluginlib/class_list_macros.h>
 #include <stdexcept>
 
 
@@ -89,13 +89,13 @@ KukaHardwareInterface::~KukaHardwareInterface()
 
 }
 
-bool KukaHardwareInterface::read(const ros::Time time, const ros::Duration period)
+void KukaHardwareInterface::read(const ros::Time& time, const ros::Duration& period)
 {
   in_buffer_.resize(1024);
 
   if (server_->recv(in_buffer_) == 0)
   {
-    return false;
+    return;
   }
 
   if (rt_rsi_pub_->trylock()){
@@ -109,11 +109,9 @@ bool KukaHardwareInterface::read(const ros::Time time, const ros::Duration perio
     joint_position_[i] = DEG2RAD * rsi_state_.positions[i];
   }
   ipoc_ = rsi_state_.ipoc;
-
-  return true;
 }
 
-bool KukaHardwareInterface::write(const ros::Time time, const ros::Duration period)
+void KukaHardwareInterface::write(const ros::Time& time, const ros::Duration& period)
 {
   out_buffer_.resize(1024);
 
@@ -124,8 +122,6 @@ bool KukaHardwareInterface::write(const ros::Time time, const ros::Duration peri
 
   out_buffer_ = RSICommand(rsi_joint_position_corrections_, ipoc_).xml_doc;
   server_->send(out_buffer_);
-
-  return true;
 }
 
 void KukaHardwareInterface::start()
@@ -179,4 +175,13 @@ void KukaHardwareInterface::configure()
   rt_rsi_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::String>(nh_, "rsi_xml_doc", 3));
 }
 
+bool KukaHardwareInterface::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)
+{
+  configure();
+  start();
+  return true;
+}
+
 } // namespace kuka_rsi_hardware_interface
+
+PLUGINLIB_EXPORT_CLASS(kuka_rsi_hw_interface::KukaHardwareInterface, hardware_interface::RobotHW)

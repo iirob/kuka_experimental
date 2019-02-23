@@ -74,11 +74,7 @@ int main(int argc, char** argv)
   //while (!g_quit)
   {
     // Receive current state from robot
-    if (!kuka_rsi_hw_interface.read(timestamp, period))
-    {
-      ROS_FATAL_NAMED("kuka_hardware_interface", "Failed to read state from robot. Shutting down!");
-      ros::shutdown();
-    }
+    kuka_rsi_hw_interface.read(timestamp, period);
 
     // Get current time and elapsed time since last read
     timestamp = ros::Time::now();
