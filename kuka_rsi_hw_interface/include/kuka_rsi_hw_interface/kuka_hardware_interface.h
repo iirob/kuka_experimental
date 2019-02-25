@@ -113,20 +113,23 @@ private:
   ros::Duration control_period_;
   ros::Duration elapsed_time_;
   double loop_hz_;
-
+protected:
   // Interfaces
   hardware_interface::JointStateInterface joint_state_interface_;
   hardware_interface::PositionJointInterface position_joint_interface_;
+// TODO
+  hardware_interface::VelocityJointInterface velocity_joint_interface_;
 
 public:
 
-  KukaHardwareInterface();
+  KukaHardwareInterface(ros::NodeHandle nh);
   ~KukaHardwareInterface();
 
   void start();
   void configure();
   bool read(const ros::Time time, const ros::Duration period);
   bool write(const ros::Time time, const ros::Duration period);
+//   virtual void handleInit();
 
 };
 

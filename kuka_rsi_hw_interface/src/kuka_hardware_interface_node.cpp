@@ -37,7 +37,13 @@
  * Author: Lars Tingelstad <lars.tingelstad@ntnu.no>
  */
 
+#include <hardware_interface/robot_hw.h>
 #include <kuka_rsi_hw_interface/kuka_hardware_interface.h>
+#include <kuka_rsi_hw_interface/kuka_hardware_interface_with_fts.h>
+#include <kdl_parser/kdl_parser.hpp>
+#include <boost/shared_ptr.hpp>
+
+boost::shared_ptr<kuka_rsi_hw_interface::KukaHardwareInterface> kuka_rsi_hwi_;
 
 int main(int argc, char** argv)
 {
@@ -50,18 +56,29 @@ int main(int argc, char** argv)
 
   ros::NodeHandle nh;
 
-  kuka_rsi_hw_interface::KukaHardwareInterface kuka_rsi_hw_interface;
-  kuka_rsi_hw_interface.configure();
+  bool kuka_fts;
 
+  if (nh.getParam("kuka_fts", kuka_fts) and kuka_fts)
+  {
+    ROS_INFO_STREAM_NAMED("hardware_interface", "This is KUKA hardware interface with FTS!");
+    kuka_rsi_hwi_.reset(new kuka_rsi_hw_interface::KukaHardwareInterfaceWithFTS(nh));
+  }
+  else
+  {
+    ROS_INFO_STREAM_NAMED("hardware_interface", "This is KUKA hardware interface without FTS!");
+    kuka_rsi_hwi_.reset(new kuka_rsi_hw_interface::KukaHardwareInterface(nh));
+  }
+  kuka_rsi_hwi_->configure();
   // Set up timers
   ros::Time timestamp;
   ros::Duration period;
   auto stopwatch_last = std::chrono::steady_clock::now();
   auto stopwatch_now = stopwatch_last;
 
-  controller_manager::ControllerManager controller_manager(&kuka_rsi_hw_interface, nh);
-
-  kuka_rsi_hw_interface.start();
+  // TODO: controller manager takes only hardware_interface::RobotHW* as arguments
+  controller_manager::ControllerManager controller_manager(kuka_rsi_hwi_.get(), nh);
+  kuka_rsi_hwi_->start();
+  ROS_WARN("kuka_rsi_hwi successfully started!");
 
   // Get current time and elapsed time since last read
   timestamp = ros::Time::now();
@@ -74,7 +91,7 @@ int main(int argc, char** argv)
   //while (!g_quit)
   {
     // Receive current state from robot
-    if (!kuka_rsi_hw_interface.read(timestamp, period))
+    if (!kuka_rsi_hwi_->read(timestamp, period))
     {
       ROS_FATAL_NAMED("kuka_hardware_interface", "Failed to read state from robot. Shutting down!");
       ros::shutdown();
@@ -90,7 +107,7 @@ int main(int argc, char** argv)
     controller_manager.update(timestamp, period);
 
     // Send new setpoint to robot
-    kuka_rsi_hw_interface.write(timestamp, period);
+    kuka_rsi_hwi_->write(timestamp, period);
   }
 
   spinner.stop();
