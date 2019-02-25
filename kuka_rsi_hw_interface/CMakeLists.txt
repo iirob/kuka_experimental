@@ -11,6 +11,9 @@ find_package(catkin REQUIRED COMPONENTS
   realtime_tools
   roscpp
   std_msgs
+  force_torque_sensor
+  force_controllers
+  kdl_parser
 )
 
 find_package(Boost REQUIRED COMPONENTS system)
@@ -28,6 +31,8 @@ catkin_package(
     joint_limits_interface
     roscpp
     std_msgs
+    force_torque_sensor
+    force_controllers
   DEPENDS
     TinyXML
 )
@@ -43,11 +48,20 @@ include_directories(
 add_library(kuka_hardware_interface
   src/kuka_hardware_interface.cpp
 )
+add_library(kuka_hardware_interface_with_fts
+  src/kuka_hardware_interface_with_fts.cpp
+)
 
 target_link_libraries(kuka_hardware_interface
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
   ${TinyXML_LIBRARIES}
+)
+target_link_libraries(kuka_hardware_interface_with_fts
+  ${catkin_LIBRARIES}
+  ${Boost_LIBRARIES}
+  ${TinyXML_LIBRARIES}
+  kuka_hardware_interface
 )
 
 add_executable(kuka_hardware_interface_node
@@ -56,7 +70,9 @@ add_executable(kuka_hardware_interface_node
 
 target_link_libraries(kuka_hardware_interface_node
   kuka_hardware_interface
+  kuka_hardware_interface_with_fts
 )
+
 
 install(
   TARGETS kuka_hardware_interface
@@ -67,3 +83,7 @@ install(
 install(
   TARGETS kuka_hardware_interface_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY config launch test
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
