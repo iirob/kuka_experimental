@@ -101,6 +101,7 @@ private:
 
   std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::String> > rt_rsi_pub_;
   std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64MultiArray> > rt_ain_pub_;
+  std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64MultiArray> > rt_fts_pub_;
   std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Int32MultiArray> > rt_din_pub_;
   std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Int32MultiArray> > rt_dout_pub_;
 

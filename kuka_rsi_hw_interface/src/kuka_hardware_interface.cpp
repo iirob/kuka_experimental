@@ -137,6 +137,35 @@ void KukaHardwareInterface::read(const ros::Time& time, const ros::Duration& per
     rt_dout_pub_->msg_.data = rsi_state_.digital_out;
     rt_dout_pub_->unlockAndPublish();
   }
+
+  if (rt_fts_pub_->trylock()){
+    std::vector<double> fts(6, 0.0);
+    //<Axis Name="Fx" values=" -0.14551  -0.06633  -3.05426 -39.06492   0.89394  33.87097 " max="1000" scale="0.390958596724837"/>
+		//<Axis Name="Fy" values="  1.43959  40.38336  -1.65248 -22.57362   0.39793 -19.58281 " max="1000" scale="0.390958596724837"/>
+		//<Axis Name="Fz" values=" 17.78615  -0.51980  18.90878  -0.54382  18.46395  -0.81585 " max="2500" scale="0.143188586050472"/>
+		//<Axis Name="Tx" values="  0.00670   0.15123 -33.14474   1.09359  32.86976  -1.65849 " max="120" scale="3.98269830325007"/>
+		//<Axis Name="Ty" values=" 36.20237  -1.27033 -18.89249   0.94801 -19.28218   0.73598 " max="120" scale="3.98269830325007"/>
+		//<Axis Name="Tz" values=" -1.34822 -19.22028  -1.17290 -21.48861   0.04581 -18.75570 " max="120" scale="3.6363767116631"/>
+
+    double a1 = rsi_state_.analog_in[0];
+    double a2 = rsi_state_.analog_in[1];
+    double a3 = rsi_state_.analog_in[2];
+    double a4 = rsi_state_.analog_in[3];
+    double a5 = rsi_state_.analog_in[4];
+    double a6 = rsi_state_.analog_in[5];
+
+    fts[0] = -0.14551 * a1 + -0.06633 * a2 + -3.05426 * a3 + -39.06492 * a4 + 0.89394 * a5 + 33.87097 * a6;
+    fts[1] = 1.43959 * a1 + 40.38336 * a2 + -1.65248 * a3 + -22.57362 * a4 + 0.39793 * a5 + -19.58281 * a6;
+    fts[2] = 17.78615 * a1 + -0.51980 * a2 + 18.90878 * a3 + -0.54382 * a4 + 18.46395 * a5 + -0.81585 * a6;
+    fts[3] = 0.00670 * a1 + 0.15123 * a2 + -33.14474  * a3 + 1.09359  * a4 + 32.86976  * a5 + -1.65849 * a6;
+    fts[4] = 36.20237 * a1 + -1.27033 * a2 + -18.89249 * a3 + 0.94801 * a4 + -19.28218 * a5 + 0.73598 * a6;
+    fts[5] = -1.34822 * a1 + -19.22028 * a2 + -1.17290 * a3 + -21.48861 * a4 + 0.04581 * a5 + -18.75570 * a6;
+
+    rt_fts_pub_->msg_.data = fts;
+    rt_fts_pub_->unlockAndPublish();
+  }
+  
+
 }
 
 void KukaHardwareInterface::write(const ros::Time& time, const ros::Duration& period)
@@ -205,6 +234,7 @@ void KukaHardwareInterface::configure()
   rt_ain_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Float64MultiArray>(nh_, "analog_in", 3));
   rt_din_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Int32MultiArray>(nh_, "digital_in", 3));
   rt_dout_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Int32MultiArray>(nh_, "digital_out", 3));
+  rt_fts_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Float64MultiArray>(nh_, "FTS", 3));
 
   
 }
