@@ -103,6 +103,9 @@ void KukaHardwareInterface::read(const ros::Time& time, const ros::Duration& per
     rt_rsi_pub_->unlockAndPublish();
   }
 
+
+
+
   rsi_state_ = RSIState(in_buffer_);
   if(rsi_state_.ipoc > ipoc_)
   {
@@ -119,6 +122,21 @@ void KukaHardwareInterface::read(const ros::Time& time, const ros::Duration& per
   }
   ipoc_ = rsi_state_.ipoc;
   joint_position_last_ = joint_position_;
+
+  if (rt_ain_pub_->trylock()){
+    rt_ain_pub_->msg_.data = rsi_state_.analog_in;
+    rt_ain_pub_->unlockAndPublish();
+  }
+
+  if (rt_din_pub_->trylock()){
+    rt_din_pub_->msg_.data = rsi_state_.digital_in;
+    rt_din_pub_->unlockAndPublish();
+  }
+
+  if (rt_dout_pub_->trylock()){
+    rt_dout_pub_->msg_.data = rsi_state_.digital_out;
+    rt_dout_pub_->unlockAndPublish();
+  }
 }
 
 void KukaHardwareInterface::write(const ros::Time& time, const ros::Duration& period)
@@ -184,6 +202,11 @@ void KukaHardwareInterface::configure()
     throw std::runtime_error(msg);
   }
   rt_rsi_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::String>(nh_, "rsi_xml_doc", 3));
+  rt_ain_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Float64MultiArray>(nh_, "analog_in", 3));
+  rt_din_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Int32MultiArray>(nh_, "digital_in", 3));
+  rt_dout_pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Int32MultiArray>(nh_, "digital_out", 3));
+
+  
 }
 
 bool KukaHardwareInterface::init(ros::NodeHandle& root_nh, ros::NodeHandle &robot_hw_nh)

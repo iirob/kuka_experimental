@@ -47,6 +47,8 @@
 // ROS
 #include <ros/ros.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Float64MultiArray.h>
+#include <std_msgs/Int32MultiArray.h>
 
 
 // ros_control
@@ -98,6 +100,10 @@ private:
   unsigned long long ipoc_;
 
   std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::String> > rt_rsi_pub_;
+  std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Float64MultiArray> > rt_ain_pub_;
+  std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Int32MultiArray> > rt_din_pub_;
+  std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Int32MultiArray> > rt_dout_pub_;
+
 
   std::unique_ptr<UDPServer> server_;
   std::string local_host_;

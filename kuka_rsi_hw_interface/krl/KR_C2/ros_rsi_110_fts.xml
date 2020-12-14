@@ -1,0 +1,72 @@
+<ROOT>
+   <CONFIG>
+      <IP_NUMBER>172.20.19.110</IP_NUMBER>   <!-- IP address of PC running kuka_rsi_hardware_interface !-->
+      <PORT>49152</PORT>                  <!-- Port-number set up for kuka_rsi_hardware_interface !-->
+      <PROTOCOL>UDP</PROTOCOL>            <!-- TCP or UDP, Protocol of the socket !-->
+      <SENTYPE>ImFree</SENTYPE>           <!-- The name of your system send in <Sen Type="" > !-->
+      <ONLYSEND>FALSE</ONLYSEND>          <!-- TRUE means the client don't expect answers. Do not send anything to robot !-->
+   </CONFIG> 
+   <SEND>
+      <ELEMENTS>
+          <ELEMENT TAG="DEF_RIst" TYPE="DOUBLE" INDX="INTERNAL" UNIT="0" />
+          <ELEMENT TAG="DEF_RSol" TYPE="DOUBLE" INDX="INTERNAL" UNIT="0" />
+          <ELEMENT TAG="DEF_AIPos" TYPE="DOUBLE" INDX="INTERNAL" UNIT="0" />
+          <ELEMENT TAG="DEF_ASPos" TYPE="DOUBLE" INDX="INTERNAL" UNIT="0" />
+          <ELEMENT TAG="DEF_Delay" TYPE="LONG" INDX="INTERNAL" UNIT="0" />
+          <ELEMENT TAG="AIN.AI1" TYPE="DOUBLE" INDX="1" UNIT="0" /> 
+          <ELEMENT TAG="AIN.AI2" TYPE="DOUBLE" INDX="2" UNIT="0" /> 
+          <ELEMENT TAG="AIN.AI3" TYPE="DOUBLE" INDX="3" UNIT="0" /> 
+          <ELEMENT TAG="AIN.AI4" TYPE="DOUBLE" INDX="4" UNIT="0" /> 
+          <ELEMENT TAG="AIN.AI5" TYPE="DOUBLE" INDX="5" UNIT="0" /> 
+          <ELEMENT TAG="AIN.AI6" TYPE="DOUBLE" INDX="6" UNIT="0" /> 
+          <ELEMENT TAG="AIN.AI7" TYPE="DOUBLE" INDX="7" UNIT="0" /> 
+          <ELEMENT TAG="DIN.DI1" TYPE="BOOL" INDX="8" UNIT="0" />
+          <ELEMENT TAG="DIN.DI2" TYPE="BOOL" INDX="9" UNIT="0" />
+          <ELEMENT TAG="DIN.DI3" TYPE="BOOL" INDX="10" UNIT="0" />
+          <ELEMENT TAG="DIN.DI4" TYPE="BOOL" INDX="11" UNIT="0" />
+          <ELEMENT TAG="DIN.DI5" TYPE="BOOL" INDX="12" UNIT="0" />
+          <ELEMENT TAG="DIN.DI6" TYPE="BOOL" INDX="13" UNIT="0" />
+          <ELEMENT TAG="DIN.DI7" TYPE="BOOL" INDX="14" UNIT="0" />
+          <ELEMENT TAG="DIN.DI8" TYPE="BOOL" INDX="15" UNIT="0" />
+          <ELEMENT TAG="DIN.DI9" TYPE="BOOL" INDX="16" UNIT="0" />
+          <ELEMENT TAG="DIN.DI10" TYPE="BOOL" INDX="17" UNIT="0" />
+          <ELEMENT TAG="DIN.DI11" TYPE="BOOL" INDX="18" UNIT="0" />
+          <ELEMENT TAG="DIN.DI12" TYPE="BOOL" INDX="19" UNIT="0" />
+          <ELEMENT TAG="DIN.DI13" TYPE="BOOL" INDX="20" UNIT="0" />
+          <ELEMENT TAG="DIN.DI14" TYPE="BOOL" INDX="21" UNIT="0" />
+          <ELEMENT TAG="DIN.DI15" TYPE="BOOL" INDX="22" UNIT="0" />
+          <ELEMENT TAG="DIN.DI16" TYPE="BOOL" INDX="23" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO1" TYPE="BOOL" INDX="24" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO2" TYPE="BOOL" INDX="25" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO3" TYPE="BOOL" INDX="26" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO4" TYPE="BOOL" INDX="27" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO5" TYPE="BOOL" INDX="28" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO6" TYPE="BOOL" INDX="29" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO7" TYPE="BOOL" INDX="30" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO8" TYPE="BOOL" INDX="31" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO9" TYPE="BOOL" INDX="32" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO10" TYPE="BOOL" INDX="33" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO11" TYPE="BOOL" INDX="34" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO12" TYPE="BOOL" INDX="35" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO13" TYPE="BOOL" INDX="36" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO14" TYPE="BOOL" INDX="37" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO15" TYPE="BOOL" INDX="38" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO16" TYPE="BOOL" INDX="39" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO17" TYPE="BOOL" INDX="40" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO18" TYPE="BOOL" INDX="41" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO19" TYPE="BOOL" INDX="42" UNIT="0" />
+          <ELEMENT TAG="DOUT.DO20" TYPE="BOOL" INDX="43" UNIT="0" />
+
+      </ELEMENTS>
+   </SEND>
+   <RECEIVE>
+      <ELEMENTS>
+         <ELEMENT TAG="AK.A1" TYPE="DOUBLE" INDX="1" UNIT="0" HOLDON="1" />
+         <ELEMENT TAG="AK.A2" TYPE="DOUBLE" INDX="2" UNIT="0" HOLDON="1" />
+         <ELEMENT TAG="AK.A3" TYPE="DOUBLE" INDX="3" UNIT="0" HOLDON="1" />
+         <ELEMENT TAG="AK.A4" TYPE="DOUBLE" INDX="4" UNIT="0" HOLDON="1" />
+         <ELEMENT TAG="AK.A5" TYPE="DOUBLE" INDX="5" UNIT="0" HOLDON="1" />
+         <ELEMENT TAG="AK.A6" TYPE="DOUBLE" INDX="6" UNIT="0" HOLDON="1" />
+      </ELEMENTS>
+   </RECEIVE>
+</ROOT>
